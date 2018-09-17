@@ -32,14 +32,13 @@ def momento(nome, name1, name2, class1, class2):
     print(nome, ' ', name2, '-> ', sep='', end='')
     calc(class2)
 
+'''
 titanic = pd.read_csv("./datasets/titanic/train.csv")
 
 print(titanic.columns[[1,5,6,9]])
 
 titanic.boxplot(column=titanic.columns[[5,6,9]].tolist(), by='Survived')
 plt.show()
-
-exit(0)
 
 v_sobrevivente = np.ndarray.astype((titanic["Survived"] == 1).values, dtype=np.bool)
 sobrevivente1 = titanic[v_sobrevivente]
@@ -53,23 +52,46 @@ print()
 momento('Fare', 'Survived=0', 'Survived=1', sobrevivente0.Fare.values, sobrevivente1.Fare.values)
 print()
 
-exit(0)
+print(titanic[titanic.Age > 60])
 
-# print(titanic[titanic.Age > 60])
+print(titanic[titanic.Fare > 50.0])
 
-#print(titanic[titanic.Fare > 50.0])
+print(titanic[titanic.SibSp > 2])
 
-#print(titanic[titanic.SibSp > 2])
+print("Age: ", titanic.Age.max() - titanic.Age.min())
+print("Fare: ", titanic.Fare.max() - titanic.Fare.min())
+print("SibSp: ", titanic.SibSp.max() - titanic.SibSp.min())
+'''
 
-#print("Age: ", titanic.Age.max() - titanic.Age.min())
-#print("Fare: ", titanic.Fare.max() - titanic.Fare.min())
-#print("SibSp: ", titanic.SibSp.max() - titanic.SibSp.min())
 
 inst_ens = pd.read_csv("./datasets/instituicoes_ensino_basico/CADASTRO_MATRICULAS_REGIAO_SUDESTE_SP_2012.csv", 
                                encoding="ISO-8859-1", sep=";", engine="python", header=11, skipfooter=2)
 
-inst_ens.boxplot(column=['NUM_SALAS_EXISTENTES', 'NUM_SALAS_UTILIZADAS'], by='REDE', figsize=(20,10))
+for i in range(inst_ens.columns.shape[0]):
+    print(inst_ens.columns[i])
+
+inst_ens.boxplot(column=['NUM_SALAS_EXISTENTES', 'NUM_FUNCIONARIOS'], by='REDE')
 plt.show()
 
-inst_ens.boxplot(column=['NUM_SALAS_EXISTENTES', 'NUM_SALAS_UTILIZADAS'], by='Localizacao', figsize=(20,10))
+inst_ens.boxplot(column=['NUM_COMPUTADORES'], by='Localizacao')
 plt.show()
+
+print("NUM_SALAS_EXISTENTES: ", inst_ens.NUM_SALAS_EXISTENTES.max()- inst_ens.NUM_SALAS_EXISTENTES.min())
+print("NUM_FUNCIONARIOS: ", inst_ens.NUM_FUNCIONARIOS.max()- inst_ens.NUM_FUNCIONARIOS.min())
+print("NUM_COMPUTADORES: ", inst_ens.NUM_COMPUTADORES.max()- inst_ens.NUM_COMPUTADORES.min())
+
+v_privada = np.ndarray.astype((inst_ens["REDE"] == 'Privada').values, dtype=np.bool)
+privada = inst_ens[v_privada]
+publica = inst_ens[np.logical_not(v_privada)]
+
+v_rural = np.ndarray.astype((inst_ens["Localizacao"] == 'Rural').values, dtype=np.bool)
+rural = inst_ens[v_rural]
+urbana = inst_ens[np.logical_not(v_rural)]
+
+print()
+momento('NUM_SALAS_EXISTENTES', 'Rede privada', 'Rede publica', privada.NUM_SALAS_EXISTENTES.values, publica.NUM_SALAS_EXISTENTES.values)
+print()
+momento('NUM_FUNCIONARIOS', 'Rede privada', 'Rede publica', privada.NUM_FUNCIONARIOS.values, publica.NUM_FUNCIONARIOS.values)
+print()
+momento('NUM_COMPUTADORES', 'Rede rural', 'Rede urbana', rural.NUM_COMPUTADORES.values, urbana.NUM_COMPUTADORES.values)
+print()
